@@ -1,0 +1,31 @@
+name: Build Windows EXE
+
+on:
+  push:
+    branches: [ main, master ]
+  workflow_dispatch: # يتيح لك تشغيل البناء يدوياً بضغطة زر من الموقع
+
+jobs:
+  build_windows:
+    runs-on: windows-latest
+
+    steps:
+      - name: 1. سحب كود المشروع
+        uses: actions/checkout@v4
+
+      - name: 2. تجهيز بيئة فلاتر
+        uses: subosito/flutter-action@v2
+        with:
+          channel: 'stable'
+
+      - name: 3. تحميل الحزم البرمجية
+        run: flutter pub get
+
+      - name: 4. بناء نسخة الويندوز التنفيذية
+        run: flutter build windows --release
+
+      - name: 5. رفع مجلد البرنامج كملف مضغوط للتحميل
+        uses: actions/upload-artifact@v4
+        with:
+          name: Windows-Markdown-Editor-EXE
+          path: build/windows/x64/runner/Release/
